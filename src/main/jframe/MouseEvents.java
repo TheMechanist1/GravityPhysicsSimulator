@@ -1,5 +1,7 @@
 package main.jframe;
 
+import main.WindowElements.CircleElement;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -11,11 +13,13 @@ public class MouseEvents implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        globalControl.displayElement("src\\resources\\circle.png", e.getXOnScreen(), e.getYOnScreen());
+
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
+        CircleElement circle = new CircleElement(e.getXOnScreen(), e.getY(), "src\\resources\\circle.png");
+        globalControl.displayElement(circle.filename, circle.x, circle.y);
 
     }
 
