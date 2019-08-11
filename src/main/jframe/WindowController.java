@@ -6,15 +6,27 @@ import java.awt.*;
 public class WindowController {
     private JFrame frame = new JFrame();
 
+    String s;
+    Dimension size;
     public WindowController(String s, Dimension size) {
+        this.s = s;
+        this.size = size;
+    }
+
+    public void setup() {
         MouseEvents event = new MouseEvents(this);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setPreferredSize(size);
         frame.setTitle(s);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(null);
         frame.addMouseListener(event);
         frame.setVisible(true);
         frame.pack();
+    }
+
+    public void render() {
+
+
     }
 
     public void displayElement(String file, int x, int y) {
