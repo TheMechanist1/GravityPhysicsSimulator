@@ -1,5 +1,8 @@
 package main.jframe;
 
+import main.GravityPhysicsSimulator;
+import main.WindowElements.BaseElement;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -13,8 +16,8 @@ public class WindowController {
         this.size = size;
     }
 
-    public void setup() {
-        MouseEvents event = new MouseEvents(this);
+    public void setup(GravityPhysicsSimulator gps) {
+        MouseEvents event = new MouseEvents(this, gps);
         frame.setPreferredSize(size);
         frame.setTitle(s);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -24,15 +27,19 @@ public class WindowController {
         frame.pack();
     }
 
-    public void render() {
-
+    public void render(GravityPhysicsSimulator gps, String fps) {
+        frame.setTitle(fps);
+        for (int i = 0; i < gps.elements.size(); i++) {
+            BaseElement b = gps.elements.get(i);
+            this.displayElement(b.filename, b.x, b.y);
+        }
 
     }
 
-    public void displayElement(String file, int x, int y) {
+    public void displayElement(String file, double x, double y) {
         ImageIcon icon = new ImageIcon(file);
         JLabel label = new JLabel(icon);
-        label.setBounds(x - icon.getIconWidth() / 2, y - icon.getIconHeight() / 2, icon.getIconWidth(), icon.getIconHeight());
+        label.setBounds((int) x - icon.getIconWidth() / 2, (int) y - icon.getIconHeight() / 2, icon.getIconWidth(), icon.getIconHeight());
 
         frame.add(label, 0);
         frame.pack();
