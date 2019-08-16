@@ -1,4 +1,4 @@
-package main.WindowElements;
+package com.mechanist.gravityphysicssimulator.WindowElements;
 
 public class BaseElement {
     public double x;

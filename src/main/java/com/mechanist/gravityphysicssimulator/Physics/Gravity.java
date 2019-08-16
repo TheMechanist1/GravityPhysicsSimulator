@@ -1,4 +1,4 @@
-package main.Physics;
+package com.mechanist.gravityphysicssimulator.Physics;
 
 import java.awt.geom.Point2D;
 
