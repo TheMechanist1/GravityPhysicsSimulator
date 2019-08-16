@@ -19,7 +19,7 @@ public class Input {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
                 keys[key] = (action != GLFW.GLFW_RELEASE);
-                System.out.println(keys[key]);
+
             }
         };
 
@@ -46,7 +46,6 @@ public class Input {
     }
 
     public boolean isKeyDown(int key) {
-        System.out.println("Key is" + keys[key]);
         return keys[key];
     }
 

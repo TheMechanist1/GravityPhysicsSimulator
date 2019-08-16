@@ -2,7 +2,7 @@ package com.mechanist.gravityphysicssimulator;
 
 import com.mechanist.gravityphysicssimulator.Render.WindowController;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 public class GravityPhysicsSimulator implements Runnable {
     public final int WIDTH = 1280, HEIGHT = 960;
@@ -30,9 +30,7 @@ public class GravityPhysicsSimulator implements Runnable {
         while (!window.shouldClose()) {
             update();
             render();
-            if (window.input.isKeyDown(GLFW_KEY_E)) {
-                System.out.println("E");
-            }
+            if (window.input.isKeyDown(GLFW_KEY_ESCAPE)) return;
         }
         window.destroy();
     }
