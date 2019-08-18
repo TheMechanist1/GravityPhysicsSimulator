@@ -2,6 +2,7 @@ package com.mechanist.gravityphysicssimulator;
 
 import com.mechanist.gravityphysicssimulator.Graphics.Mesh;
 import com.mechanist.gravityphysicssimulator.Graphics.Renderer;
+import com.mechanist.gravityphysicssimulator.Graphics.Shader;
 import com.mechanist.gravityphysicssimulator.Graphics.Vertex;
 import com.mechanist.gravityphysicssimulator.Math.Vector3f;
 import com.mechanist.gravityphysicssimulator.Render.WindowController;
@@ -9,15 +10,16 @@ import com.mechanist.gravityphysicssimulator.Render.WindowController;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class GravityPhysicsSimulator implements Runnable {
-    public final int WIDTH = 1820, HEIGHT = 980;
+    public final int WIDTH = 980, HEIGHT = 980;
     public Thread game;
     public WindowController window;
     public Renderer renderer;
+    public Shader shader;
     public Mesh mesh = new Mesh(new Vertex[]{
-            new Vertex(new Vector3f(-0.5f, 0.5f, 0f)),
-            new Vertex(new Vector3f(0.5f, 0.5f, 0f)),
-            new Vertex(new Vector3f(0.5f, -0.5f, 0f)),
-            new Vertex(new Vector3f(-0.5f, -0.5f, 0f)),
+            new Vertex(new Vector3f(-0.5f, 0.5f, 0f), new Vector3f(1f, 0f, 0f)),
+            new Vertex(new Vector3f(0.5f, 0.5f, 0f), new Vector3f(1f, 1f, 0f)),
+            new Vertex(new Vector3f(0.5f, -0.5f, 0f), new Vector3f(0f, 1f, 0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f, 0f), new Vector3f(0f, 0f, 1f)),
 
     }, new int[]{
             0, 1, 2, 0, 3, 2
@@ -35,10 +37,12 @@ public class GravityPhysicsSimulator implements Runnable {
 
     public void init() {
         window = new WindowController(WIDTH, HEIGHT, "Gravity");
-        renderer = new Renderer();
+        shader = new Shader("/Shaders/mainVertex.glsl", "/Shaders/mainFragment.glsl");
+        renderer = new Renderer(shader);
 //        window.setBackgroundColor(1.0f,1.0f,1.0f);
         window.create();
         mesh.create();
+        shader.create();
         shouldClose = false;
 
     }
@@ -51,7 +55,13 @@ public class GravityPhysicsSimulator implements Runnable {
             render();
             if (window.input.isKeyDown(GLFW_KEY_F11)) window.setFullscreen(true);
         }
+        close();
+    }
+
+    private void close() {
         window.destroy();
+        mesh.destroy();
+        shader.destroy();
     }
 
     private void update() {

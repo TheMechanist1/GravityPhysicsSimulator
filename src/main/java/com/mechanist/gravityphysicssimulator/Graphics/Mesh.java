@@ -12,7 +12,7 @@ import java.nio.IntBuffer;
 public class Mesh {
     private Vertex[] vertices;
     private int[] indices;
-    private int vao, positionBufferObject, indexBufferObject;
+    private int vao, positionBufferObject, indexBufferObject, colorBufferObject;
 
     public Mesh(Vertex[] vertices, int[] indices) {
         this.vertices = vertices;
@@ -32,11 +32,18 @@ public class Mesh {
         }
         positionBuffer.put(positionData).flip();
 
-        positionBufferObject = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, positionBufferObject);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, positionBuffer, GL15.GL_STATIC_DRAW);
-        GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        positionBufferObject = storeData(positionBuffer, 0, 3);
+
+        FloatBuffer colorBuffer = MemoryUtil.memAllocFloat(vertices.length * 3);
+        float[] colorData = new float[vertices.length * 3];
+        for (int i = 0; i < vertices.length; i++) {
+            colorData[i * 3] = vertices[i].getColor().getX();
+            colorData[i * 3 + 1] = vertices[i].getColor().getY();
+            colorData[i * 3 + 2] = vertices[i].getColor().getZ();
+        }
+        colorBuffer.put(colorData).flip();
+
+        colorBufferObject = storeData(colorBuffer, 1, 3);
 
         IntBuffer indicesBuffer = MemoryUtil.memAllocInt(indices.length);
         indicesBuffer.put(indices).flip();
@@ -44,6 +51,23 @@ public class Mesh {
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
+    private int storeData(FloatBuffer buffer, int index, int size) {
+        int bufferID = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferID);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+        GL20.glVertexAttribPointer(index, size, GL11.GL_FLOAT, false, 0, 0);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        return bufferID;
+    }
+
+    public void destroy() {
+        GL15.glDeleteBuffers(positionBufferObject);
+        GL15.glDeleteBuffers(colorBufferObject);
+        GL15.glDeleteBuffers(indexBufferObject);
+
+        GL30.glDeleteVertexArrays(vao);
     }
 
     public Vertex[] getVertices() {
@@ -60,6 +84,10 @@ public class Mesh {
 
     public int getPositionBufferObject() {
         return positionBufferObject;
+    }
+
+    public int getColorBufferObject() {
+        return colorBufferObject;
     }
 
     public int getIndexBufferObject() {
