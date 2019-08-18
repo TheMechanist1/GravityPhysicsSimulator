@@ -1,7 +1,11 @@
 package com.mechanist.gravityphysicssimulator.Render;
 
+import com.mechanist.gravityphysicssimulator.Math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.GLFWWindowSizeCallback;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 
 
 public class WindowController {
@@ -11,6 +15,12 @@ public class WindowController {
     private int width, height;
     private String title;
     private long window;
+    private Vector3f backgroundColor = new Vector3f(1f, 0f, 0f);
+    private GLFWWindowSizeCallback sizeCallback;
+    private boolean isResized;
+    private boolean isFullscreen;
+    private int[] windowPosX = new int[1];
+    private int[] windowPosY = new int[1];
 
     public WindowController(int width, int height, String title) {
         this.width = width;
@@ -25,7 +35,7 @@ public class WindowController {
             return;
         }
 
-        window = GLFW.glfwCreateWindow(width, height, title, 0, 0);
+        window = GLFW.glfwCreateWindow(width, height, title, isFullscreen ? GLFW.glfwGetPrimaryMonitor() : 0, 0);
 
         if (window == 0) {
             System.out.println("Failed to create window");
@@ -33,14 +43,15 @@ public class WindowController {
         }
 
         GLFWVidMode videoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
-
-        GLFW.glfwSetWindowPos(window, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
-
+        windowPosX[0] = (videoMode.width() - width) / 2;
+        windowPosY[0] = (videoMode.height() - height) / 2;
+        GLFW.glfwSetWindowPos(window, windowPosX[0], windowPosY[0]);
         GLFW.glfwMakeContextCurrent(window);
+        GL.createCapabilities();
+        GL11.glClearColor(backgroundColor.getX(), backgroundColor.getY(), backgroundColor.getZ(), 1.0f);
 
-        GLFW.glfwSetKeyCallback(window, input.getKeyboardCallback());
-        GLFW.glfwSetCursorPosCallback(window, input.getMouseMoveCallback());
-        GLFW.glfwSetMouseButtonCallback(window, input.getMouseButtonsCallback());
+
+        createCallbacks();
 
         GLFW.glfwShowWindow(window);
 
@@ -48,7 +59,33 @@ public class WindowController {
         time = System.nanoTime();
     }
 
+    private void createCallbacks() {
+        sizeCallback = new GLFWWindowSizeCallback() {
+            @Override
+            public void invoke(long window, int w, int h) {
+                width = w;
+                height = h;
+                isResized = true;
+            }
+        };
+
+        GLFW.glfwSetKeyCallback(window, input.getKeyboardCallback());
+        GLFW.glfwSetCursorPosCallback(window, input.getMouseMoveCallback());
+        GLFW.glfwSetMouseButtonCallback(window, input.getMouseButtonsCallback());
+        GLFW.glfwSetScrollCallback(window, input.getScroll());
+        GLFW.glfwSetWindowSizeCallback(window, sizeCallback);
+    }
+
     public void update() {
+        if (isResized) {
+            GL11.glViewport(0, 0, width, height);
+            isResized = false;
+        }
+
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+
+
+
         GLFW.glfwPollEvents();
         frames++;
         if (System.nanoTime() > time + 1000000000) {
@@ -60,6 +97,7 @@ public class WindowController {
 
     public void swapBuffers() {
         GLFW.glfwSwapBuffers(window);
+        GL11.glDrawPixels(10, 10, 0, 0, window);
     }
 
     public boolean shouldClose() {
@@ -68,9 +106,44 @@ public class WindowController {
 
     public void destroy() {
         input.freeCallbacks();
+        sizeCallback.free();
         GLFW.glfwWindowShouldClose(window);
         GLFW.glfwDestroyWindow(window);
         GLFW.glfwTerminate();
     }
 
+    public void setBackgroundColor(float red, float green, float blue) {
+        backgroundColor.set(red, green, blue);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public long getWindow() {
+        return window;
+    }
+
+    public boolean isFullscreen() {
+        return isFullscreen;
+    }
+
+    public void setFullscreen(boolean fullscreen) {
+        isFullscreen = fullscreen;
+        isResized = true;
+        if (isFullscreen) {
+            GLFW.glfwGetWindowPos(window, windowPosX, windowPosY);
+            GLFW.glfwSetWindowMonitor(window, GLFW.glfwGetPrimaryMonitor(), 0, 0, width, height, 0);
+        } else {
+            GLFW.glfwSetWindowMonitor(window, 0, windowPosX[0], windowPosY[0], width, height, 0);
+        }
+    }
 }

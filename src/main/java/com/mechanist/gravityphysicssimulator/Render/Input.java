@@ -1,18 +1,17 @@
 package com.mechanist.gravityphysicssimulator.Render;
 
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.*;
 
 public class Input {
     private boolean[] keys = new boolean[GLFW.GLFW_KEY_LAST];
     private boolean[] mouse = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST];
     private double mouseX, mouseY;
+    private double scrollX, scrollY;
 
     private GLFWKeyCallback keyboard;
     private GLFWCursorPosCallback mouseMove;
     private GLFWMouseButtonCallback mouseButtons;
+    private GLFWScrollCallback scroll;
 
     public Input() {
         keyboard = new GLFWKeyCallback() {
@@ -37,12 +36,21 @@ public class Input {
                 mouse[button] = (action != GLFW.GLFW_RELEASE);
             }
         };
+
+        scroll = new GLFWScrollCallback() {
+            @Override
+            public void invoke(long window, double xoffset, double yoffset) {
+                scrollX += xoffset;
+                scrollY += yoffset;
+            }
+        };
     }
 
     public void freeCallbacks() {
         keyboard.free();
         mouseMove.free();
         mouseButtons.free();
+        scroll.free();
     }
 
     public boolean isKeyDown(int key) {
@@ -61,6 +69,14 @@ public class Input {
         return mouseY;
     }
 
+    public double getScrollX() {
+        return scrollX;
+    }
+
+    public double getScrollY() {
+        return scrollY;
+    }
+
     public GLFWKeyCallback getKeyboardCallback() {
         return keyboard;
     }
@@ -71,5 +87,9 @@ public class Input {
 
     public GLFWMouseButtonCallback getMouseButtonsCallback() {
         return mouseButtons;
+    }
+
+    public GLFWScrollCallback getScroll() {
+        return scroll;
     }
 }

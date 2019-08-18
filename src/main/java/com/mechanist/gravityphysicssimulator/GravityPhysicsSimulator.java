@@ -1,13 +1,28 @@
 package com.mechanist.gravityphysicssimulator;
 
+import com.mechanist.gravityphysicssimulator.Graphics.Mesh;
+import com.mechanist.gravityphysicssimulator.Graphics.Renderer;
+import com.mechanist.gravityphysicssimulator.Graphics.Vertex;
+import com.mechanist.gravityphysicssimulator.Math.Vector3f;
 import com.mechanist.gravityphysicssimulator.Render.WindowController;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class GravityPhysicsSimulator implements Runnable {
-    public final int WIDTH = 1280, HEIGHT = 960;
+    public final int WIDTH = 1820, HEIGHT = 980;
     public Thread game;
     public WindowController window;
+    public Renderer renderer;
+    public Mesh mesh = new Mesh(new Vertex[]{
+            new Vertex(new Vector3f(-0.5f, 0.5f, 0f)),
+            new Vertex(new Vector3f(0.5f, 0.5f, 0f)),
+            new Vertex(new Vector3f(0.5f, -0.5f, 0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f, 0f)),
+
+    }, new int[]{
+            0, 1, 2, 0, 3, 2
+    });
+    private boolean shouldClose;
 
     public static void main(String[] args) {
         new GravityPhysicsSimulator().start();
@@ -20,28 +35,37 @@ public class GravityPhysicsSimulator implements Runnable {
 
     public void init() {
         window = new WindowController(WIDTH, HEIGHT, "Gravity");
+        renderer = new Renderer();
+//        window.setBackgroundColor(1.0f,1.0f,1.0f);
         window.create();
+        mesh.create();
+        shouldClose = false;
 
     }
 
     public void run() {
         init();
 
-        while (!window.shouldClose()) {
+        while (!window.shouldClose() && !window.input.isKeyDown(GLFW_KEY_ESCAPE)) {
             update();
             render();
-            if (window.input.isKeyDown(GLFW_KEY_ESCAPE)) return;
+            if (window.input.isKeyDown(GLFW_KEY_F11)) window.setFullscreen(true);
         }
         window.destroy();
     }
 
     private void update() {
         window.update();
+        if (window.input.isButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+//            System.out.println(window.input.getMouseX() + " " + window.input.getMouseY() + " " + window.input.getScrollX() + " " + window.input.getScrollY());
+        }
 
     }
 
     private void render() {
+        renderer.renderMesh(mesh);
         window.swapBuffers();
+
     }
 
 
