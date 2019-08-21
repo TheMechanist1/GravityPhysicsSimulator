@@ -1,5 +1,6 @@
 package com.mechanist.gravityphysicssimulator.Render;
 
+import com.mechanist.gravityphysicssimulator.Math.Matrix4f;
 import com.mechanist.gravityphysicssimulator.Math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -21,11 +22,14 @@ public class WindowController {
     private boolean isFullscreen;
     private int[] windowPosX = new int[1];
     private int[] windowPosY = new int[1];
+    private Matrix4f projection;
 
     public WindowController(int width, int height, String title) {
         this.width = width;
         this.height = height;
         this.title = title;
+        projection = Matrix4f.projection(70f, (float) this.width / (float) this.height, 0.1f, 10f);
+
     }
 
     public void create() {
@@ -78,6 +82,7 @@ public class WindowController {
 
     public void update() {
         if (isResized) {
+            projection = Matrix4f.projection(70f, (float) this.width / (float) this.height, 0.1f, 10f);
             GL11.glViewport(0, 0, width, height);
             isResized = false;
         }
@@ -145,5 +150,9 @@ public class WindowController {
         } else {
             GLFW.glfwSetWindowMonitor(window, 0, windowPosX[0], windowPosY[0], width, height, 0);
         }
+    }
+
+    public Matrix4f getProjection() {
+        return projection;
     }
 }

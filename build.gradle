@@ -36,4 +36,5 @@ dependencies {
 	runtimeOnly "org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives"
 	runtimeOnly "org.lwjgl:lwjgl-par:$lwjglVersion:$lwjglNatives"
 	runtimeOnly "org.lwjgl:lwjgl-stb:$lwjglVersion:$lwjglNatives"
+	compile files("./libs/slick-util3.jar")
 }

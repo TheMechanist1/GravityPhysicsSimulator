@@ -12,14 +12,18 @@ import java.nio.IntBuffer;
 public class Mesh {
     private Vertex[] vertices;
     private int[] indices;
-    private int vao, positionBufferObject, indexBufferObject, colorBufferObject;
+    private Material mat;
+    private int vao, positionBufferObject, indexBufferObject, colorBufferObject, textureBufferObject;
 
-    public Mesh(Vertex[] vertices, int[] indices) {
+    public Mesh(Vertex[] vertices, int[] indices, Material mat) {
         this.vertices = vertices;
         this.indices = indices;
+        this.mat = mat;
     }
 
     public void create() {
+        mat.create();
+
         vao = GL30.glGenVertexArrays();
         GL30.glBindVertexArray(vao);
 
@@ -45,6 +49,17 @@ public class Mesh {
 
         colorBufferObject = storeData(colorBuffer, 1, 3);
 
+        FloatBuffer textureBuffer = MemoryUtil.memAllocFloat(vertices.length * 2);
+        float[] textureData = new float[vertices.length * 2];
+        for (int i = 0; i < vertices.length; i++) {
+            textureData[i * 2] = vertices[i].getTextureCoord().getX();
+            textureData[i * 2 + 1] = vertices[i].getTextureCoord().getY();
+
+        }
+        textureBuffer.put(textureData).flip();
+
+        textureBufferObject = storeData(textureBuffer, 2, 2);
+
         IntBuffer indicesBuffer = MemoryUtil.memAllocInt(indices.length);
         indicesBuffer.put(indices).flip();
         indexBufferObject = GL15.glGenBuffers();
@@ -66,8 +81,11 @@ public class Mesh {
         GL15.glDeleteBuffers(positionBufferObject);
         GL15.glDeleteBuffers(colorBufferObject);
         GL15.glDeleteBuffers(indexBufferObject);
+        GL15.glDeleteBuffers(textureBufferObject);
 
         GL30.glDeleteVertexArrays(vao);
+
+        mat.destroy();
     }
 
     public Vertex[] getVertices() {
@@ -82,6 +100,7 @@ public class Mesh {
         return vao;
     }
 
+
     public int getPositionBufferObject() {
         return positionBufferObject;
     }
@@ -92,5 +111,13 @@ public class Mesh {
 
     public int getIndexBufferObject() {
         return indexBufferObject;
+    }
+
+    public int getTextureBufferObject() {
+        return textureBufferObject;
+    }
+
+    public Material getMat() {
+        return mat;
     }
 }
