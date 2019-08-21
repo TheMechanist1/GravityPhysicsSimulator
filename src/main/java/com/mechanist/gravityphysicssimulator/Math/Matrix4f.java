@@ -1,5 +1,7 @@
 package com.mechanist.gravityphysicssimulator.Math;
 
+import java.util.Arrays;
+
 public class Matrix4f {
     public static final int SIZE = 4;
     private float[] elements = new float[SIZE * SIZE];
@@ -113,6 +115,35 @@ public class Matrix4f {
         result.set(3, 3, 0f);
 
         return result;
+    }
+
+    public static Matrix4f view(Vector3f position, Vector3f rotation) {
+        Matrix4f result;
+
+        Vector3f negativePos = new Vector3f(-position.getX(), -position.getY(), -position.getZ());
+        Matrix4f translationMatrix = Matrix4f.translate(negativePos);
+        Matrix4f rotationMatrixX = Matrix4f.rotate(rotation.getX(), new Vector3f(1, 0, 0));
+        Matrix4f rotationMatrixY = Matrix4f.rotate(rotation.getY(), new Vector3f(0, 1, 0));
+        Matrix4f rotationMatrixZ = Matrix4f.rotate(rotation.getZ(), new Vector3f(0, 0, 1));
+
+
+        Matrix4f rotationMatrix = Matrix4f.multiply(rotationMatrixZ, Matrix4f.multiply(rotationMatrixX, rotationMatrixY));
+
+        result = Matrix4f.multiply(translationMatrix, rotationMatrix);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Matrix4f matrix4f = (Matrix4f) o;
+        return Arrays.equals(elements, matrix4f.elements);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(elements);
     }
 
     public float get(int x, int y) {

@@ -3,10 +3,10 @@ package com.mechanist.gravityphysicssimulator.Render;
 import org.lwjgl.glfw.*;
 
 public class Input {
-    private boolean[] keys = new boolean[GLFW.GLFW_KEY_LAST];
-    private boolean[] mouse = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST];
-    private double mouseX, mouseY;
-    private double scrollX, scrollY;
+    private static boolean[] keys = new boolean[GLFW.GLFW_KEY_LAST];
+    private static boolean[] mouse = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST];
+    private static double mouseX, mouseY;
+    private static double scrollX, scrollY;
 
     private GLFWKeyCallback keyboard;
     private GLFWCursorPosCallback mouseMove;
@@ -53,27 +53,27 @@ public class Input {
         scroll.free();
     }
 
-    public boolean isKeyDown(int key) {
+    public static boolean isKeyDown(int key) {
         return keys[key];
     }
 
-    public boolean isButtonDown(int key) {
+    public static boolean isButtonDown(int key) {
         return mouse[key];
     }
 
-    public double getMouseX() {
+    public static double getMouseX() {
         return mouseX;
     }
 
-    public double getMouseY() {
+    public static double getMouseY() {
         return mouseY;
     }
 
-    public double getScrollX() {
+    public static double getScrollX() {
         return scrollX;
     }
 
-    public double getScrollY() {
+    public static double getScrollY() {
         return scrollY;
     }
 

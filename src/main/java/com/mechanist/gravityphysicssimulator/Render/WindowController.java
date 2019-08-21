@@ -1,6 +1,7 @@
 package com.mechanist.gravityphysicssimulator.Render;
 
 import com.mechanist.gravityphysicssimulator.Math.Matrix4f;
+import com.mechanist.gravityphysicssimulator.Math.Vector2f;
 import com.mechanist.gravityphysicssimulator.Math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -23,13 +24,14 @@ public class WindowController {
     private int[] windowPosX = new int[1];
     private int[] windowPosY = new int[1];
     private Matrix4f projection;
+    public static Vector2f SIZE;
 
     public WindowController(int width, int height, String title) {
         this.width = width;
         this.height = height;
         this.title = title;
-        projection = Matrix4f.projection(70f, (float) this.width / (float) this.height, 0.1f, 10f);
-
+        projection = Matrix4f.projection(70f, (float) this.width / (float) this.height, 0f, 10f);
+        SIZE = new Vector2f(width, height);
     }
 
     public void create() {
@@ -82,9 +84,10 @@ public class WindowController {
 
     public void update() {
         if (isResized) {
-            projection = Matrix4f.projection(70f, (float) this.width / (float) this.height, 0.1f, 10f);
+            projection = Matrix4f.projection(70f, (float) this.width / (float) this.height, 0f, 10f);
             GL11.glViewport(0, 0, width, height);
             isResized = false;
+            SIZE = new Vector2f(width, height);
         }
 
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);

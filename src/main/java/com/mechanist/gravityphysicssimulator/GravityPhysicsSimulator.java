@@ -3,8 +3,10 @@ package com.mechanist.gravityphysicssimulator;
 import com.mechanist.gravityphysicssimulator.Graphics.*;
 import com.mechanist.gravityphysicssimulator.Math.Vector2f;
 import com.mechanist.gravityphysicssimulator.Math.Vector3f;
+import com.mechanist.gravityphysicssimulator.Render.Input;
 import com.mechanist.gravityphysicssimulator.Render.WindowController;
 import com.mechanist.gravityphysicssimulator.WindowElements.BaseElement;
+import com.mechanist.gravityphysicssimulator.WindowElements.CameraElement;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -23,7 +25,8 @@ public class GravityPhysicsSimulator implements Runnable {
     }, new int[]{
             0, 1, 2, 0, 3, 2
     }, new Material("/Textures/circle.png"));
-    BaseElement element = new BaseElement(new Vector3f(0f, 0f, -2f), new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), mesh);
+    BaseElement element = new BaseElement(new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), mesh);
+    CameraElement camera = new CameraElement(new Vector3f(0f, 0f, 1f), new Vector3f(0f, 0f, 0f));
     private boolean shouldClose;
 
     public static void main(String[] args) {
@@ -38,7 +41,7 @@ public class GravityPhysicsSimulator implements Runnable {
     public void init() {
         window = new WindowController(WIDTH, HEIGHT, "Gravity");
         shader = new Shader("/Shaders/mainVertex.glsl", "/Shaders/mainFragment.glsl");
-        renderer = new Renderer(window, shader);
+        renderer = new Renderer(window, shader, camera);
 //        window.setBackgroundColor(1.0f,1.0f,1.0f);
         window.create();
         mesh.create();
@@ -50,11 +53,11 @@ public class GravityPhysicsSimulator implements Runnable {
     public void run() {
         init();
 
-        while (!window.shouldClose() && !window.input.isKeyDown(GLFW_KEY_ESCAPE)) {
+        while (!window.shouldClose() && !Input.isKeyDown(GLFW_KEY_ESCAPE)) {
             update();
 
             render();
-            if (window.input.isKeyDown(GLFW_KEY_F11)) window.setFullscreen(true);
+            if (Input.isKeyDown(GLFW_KEY_F11)) window.setFullscreen(true);
         }
         close();
     }
@@ -67,8 +70,9 @@ public class GravityPhysicsSimulator implements Runnable {
 
     private void update() {
         window.update();
-        element.update();
-        if (window.input.isButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+//        element.update();
+        camera.update();
+        if (Input.isButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
 //            System.out.println(window.input.getMouseX() + " " + window.input.getMouseY() + " " + window.input.getScrollX() + " " + window.input.getScrollY());
         }
 
