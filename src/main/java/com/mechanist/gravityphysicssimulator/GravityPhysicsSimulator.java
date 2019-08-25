@@ -1,14 +1,20 @@
 package com.mechanist.gravityphysicssimulator;
 
-import com.mechanist.gravityphysicssimulator.Graphics.*;
-import com.mechanist.gravityphysicssimulator.Math.Vector2f;
+import com.mechanist.gravityphysicssimulator.Graphics.Mesh;
+import com.mechanist.gravityphysicssimulator.Graphics.Renderer;
+import com.mechanist.gravityphysicssimulator.Graphics.Shader;
 import com.mechanist.gravityphysicssimulator.Math.Vector3f;
 import com.mechanist.gravityphysicssimulator.Render.Input;
 import com.mechanist.gravityphysicssimulator.Render.WindowController;
 import com.mechanist.gravityphysicssimulator.WindowElements.BaseElement;
 import com.mechanist.gravityphysicssimulator.WindowElements.CameraElement;
+import com.mechanist.gravityphysicssimulator.utils.MeshLoader;
 
-import static org.lwjgl.glfw.GLFW.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
 
 public class GravityPhysicsSimulator implements Runnable {
     public final int WIDTH = 980, HEIGHT = 980;
@@ -16,16 +22,11 @@ public class GravityPhysicsSimulator implements Runnable {
     public WindowController window;
     public Renderer renderer;
     public Shader shader;
-    public Mesh mesh = new Mesh(new Vertex[]{
-            new Vertex(new Vector3f(-0.5f, 0.5f, 0f), new Vector3f(1f, 0f, 0f), new Vector2f(0f, 0f)),
-            new Vertex(new Vector3f(0.5f, 0.5f, 0f), new Vector3f(1f, 1f, 0f), new Vector2f(0f, 1f)),
-            new Vertex(new Vector3f(0.5f, -0.5f, 0f), new Vector3f(0f, 1f, 0f), new Vector2f(1f, 1f)),
-            new Vertex(new Vector3f(-0.5f, -0.5f, 0f), new Vector3f(0f, 0f, 1f), new Vector2f(1f, 0f)),
+    public List<BaseElement> list = new ArrayList<>();
 
-    }, new int[]{
-            0, 1, 2, 0, 3, 2
-    }, new Material("/Textures/circle.png"));
-    BaseElement element = new BaseElement(new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), mesh);
+    Mesh rectangleMesh = MeshLoader.fileToMesh("src/main/resources/Models/rectangleMesh");
+    Mesh planeMesh = MeshLoader.fileToMesh("src/main/resources/Models/planeMesh");
+
     CameraElement camera = new CameraElement(new Vector3f(0f, 0f, 1f), new Vector3f(0f, 0f, 0f));
     private boolean shouldClose;
 
@@ -39,13 +40,21 @@ public class GravityPhysicsSimulator implements Runnable {
     }
 
     public void init() {
+
         window = new WindowController(WIDTH, HEIGHT, "Gravity");
         shader = new Shader("/Shaders/mainVertex.glsl", "/Shaders/mainFragment.glsl");
         renderer = new Renderer(window, shader, camera);
 //        window.setBackgroundColor(1.0f,1.0f,1.0f);
         window.create();
-        mesh.create();
+        rectangleMesh.create();
+        planeMesh.create();
         shader.create();
+
+
+        list.add(new BaseElement(new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), rectangleMesh));
+        list.add(new BaseElement(new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), planeMesh));
+
+
         shouldClose = false;
 
     }
@@ -64,22 +73,25 @@ public class GravityPhysicsSimulator implements Runnable {
 
     private void close() {
         window.destroy();
-        mesh.destroy();
+        rectangleMesh.destroy();
+        planeMesh.destroy();
         shader.destroy();
     }
 
     private void update() {
         window.update();
-//        element.update();
         camera.update();
-        if (Input.isButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
-//            System.out.println(window.input.getMouseX() + " " + window.input.getMouseY() + " " + window.input.getScrollX() + " " + window.input.getScrollY());
+
+        for (int i = 0; i < list.size(); i++) {
+//            Gravity.gravity(list.get(i), -0.001f);
         }
 
     }
 
     private void render() {
-        renderer.renderMesh(element);
+        for (int i = 0; i < list.size(); i++) {
+            renderer.renderMesh(list.get(i));
+        }
         window.swapBuffers();
 
     }

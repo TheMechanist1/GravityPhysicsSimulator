@@ -17,7 +17,7 @@ public class Input {
         keyboard = new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
-                keys[key] = (action != GLFW.GLFW_RELEASE);
+                if (key < keys.length) keys[key] = (action != GLFW.GLFW_RELEASE);
 
             }
         };
@@ -33,7 +33,7 @@ public class Input {
         mouseButtons = new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
-                mouse[button] = (action != GLFW.GLFW_RELEASE);
+                if (button < mouse.length) mouse[button] = (action != GLFW.GLFW_RELEASE);
             }
         };
 

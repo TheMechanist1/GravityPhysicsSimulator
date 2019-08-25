@@ -32,13 +32,17 @@ public class Renderer {
         shader.setUniform("model", Matrix4f.transform(element.getPosition(), element.getRotation(), element.getScale()));
         shader.setUniform("projection", window.getProjection());
         shader.setUniform("view", Matrix4f.view(camera.getPosition(), camera.getRotation()));
+        GL30.glEnable(GL30.GL_DEPTH_TEST);
+
         GL11.glDrawElements(GL11.GL_TRIANGLES, element.getMesh().getIndices().length, GL11.GL_UNSIGNED_INT, 0);
 
+        GL30.glDisable(GL30.GL_DEPTH_TEST);
         shader.unbind();
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
         GL30.glDisableVertexAttribArray(2);
         GL30.glDisableVertexAttribArray(1);
         GL30.glDisableVertexAttribArray(0);
         GL30.glBindVertexArray(0);
+
     }
 }

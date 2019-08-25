@@ -30,7 +30,7 @@ public class WindowController {
         this.width = width;
         this.height = height;
         this.title = title;
-        projection = Matrix4f.projection(70f, (float) this.width / (float) this.height, 0f, 10f);
+        projection = Matrix4f.projection(70f, (float) this.width / (float) this.height, 0.1f, 10000.0f);
         SIZE = new Vector2f(width, height);
     }
 
@@ -84,13 +84,14 @@ public class WindowController {
 
     public void update() {
         if (isResized) {
-            projection = Matrix4f.projection(70f, (float) this.width / (float) this.height, 0f, 10f);
+            projection = Matrix4f.projection(70f, (float) this.width / (float) this.height, 0.1f, 10000f);
             GL11.glViewport(0, 0, width, height);
             isResized = false;
             SIZE = new Vector2f(width, height);
         }
 
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 
 

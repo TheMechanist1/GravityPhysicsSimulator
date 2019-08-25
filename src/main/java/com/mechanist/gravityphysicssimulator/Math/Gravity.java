@@ -1,18 +1,12 @@
 package com.mechanist.gravityphysicssimulator.Math;
 
-import java.awt.geom.Point2D;
+import com.mechanist.gravityphysicssimulator.WindowElements.BaseElement;
 
 public class Gravity {
+    private static float acceleration;
 
-    public Point2D gravity(double x, double y, double gravityStrength) {
-        Point2D point = new Point2D.Float();
-        if (gravityStrength == 0) {
-            point.setLocation(x, y);
-            return point;
-        } else {
-            double deltaY = Math.pow((1f / 2f) * gravityStrength, 2);
-            point.setLocation(x, y + deltaY);
-            return point;
-        }
+    public static void gravity(BaseElement element, float gravityStrength) {
+        acceleration += gravityStrength;
+        element.setPosition(Vector3f.add(element.getPosition(), new Vector3f(0, acceleration, 0)));
     }
 }

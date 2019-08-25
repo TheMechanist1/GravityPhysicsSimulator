@@ -19,7 +19,7 @@ public class CameraElement {
 
     public void update() {
         Vector2f size = WindowController.SIZE;
-        position = new Vector3f(position.getX(), position.getY(), (float) -Input.getScrollY() / 10 + 1);
+
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_MIDDLE)) {
             mousePos = new Vector3f((float) Input.getMouseX(), (float) Input.getMouseY(), 0);
             Vector3f vector = new Vector3f((float) (mousePos.getX() - oldMouseX), (float) (mousePos.getY() - oldMouseY), 0f);
@@ -34,10 +34,14 @@ public class CameraElement {
         }
 
 
-        if (Input.isKeyDown(GLFW.GLFW_KEY_W)) position = Vector3f.add(position, new Vector3f(0, moveSpeed, 0));
+        if (Input.isKeyDown(GLFW.GLFW_KEY_W)) position = Vector3f.add(position, new Vector3f(0, 0, -moveSpeed));
         if (Input.isKeyDown(GLFW.GLFW_KEY_A)) position = Vector3f.add(position, new Vector3f(-moveSpeed, 0, 0));
-        if (Input.isKeyDown(GLFW.GLFW_KEY_S)) position = Vector3f.add(position, new Vector3f(0, -moveSpeed, 0));
+        if (Input.isKeyDown(GLFW.GLFW_KEY_S)) position = Vector3f.add(position, new Vector3f(0, 0, moveSpeed));
         if (Input.isKeyDown(GLFW.GLFW_KEY_D)) position = Vector3f.add(position, new Vector3f(moveSpeed, 0, 0));
+        if (Input.isKeyDown(GLFW.GLFW_KEY_SPACE)) position = Vector3f.add(position, new Vector3f(0, moveSpeed, 0));
+        if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT))
+            position = Vector3f.add(position, new Vector3f(0, -moveSpeed, 0));
+        if (Input.isKeyDown(GLFW.GLFW_KEY_Q)) rotation = Vector3f.add(rotation, new Vector3f(0, moveSpeed, 0));
 
     }
 

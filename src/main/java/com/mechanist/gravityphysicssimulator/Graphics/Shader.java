@@ -25,7 +25,6 @@ public class Shader {
 
         GL20.glShaderSource(vertexID, vertexFile);
         GL20.glCompileShader(vertexID);
-
         if (GL20.glGetShaderi(vertexID, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
             System.err.println("Vertex Shader Ran into a problem: " + GL20.glGetShaderInfoLog(vertexID));
             return;

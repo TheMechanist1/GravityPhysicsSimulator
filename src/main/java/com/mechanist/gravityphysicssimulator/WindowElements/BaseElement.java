@@ -15,15 +15,21 @@ public class BaseElement {
         this.mesh = mesh;
     }
 
-    public void update() {
-        temp -= 0.01;
-        position.set(0, 0, temp);
-
-
-    }
 
     public Vector3f getPosition() {
         return position;
+    }
+
+    public void setPosition(Vector3f position) {
+        this.position = position;
+    }
+
+    public void setRotation(Vector3f rotation) {
+        this.rotation = rotation;
+    }
+
+    public void setScale(Vector3f scale) {
+        this.scale = scale;
     }
 
     public Vector3f getRotation() {
